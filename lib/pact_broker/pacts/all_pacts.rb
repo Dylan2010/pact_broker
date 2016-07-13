@@ -55,6 +55,10 @@ module PactBroker
           reverse_order(:consumer_version_order).limit(1)
         end
 
+        def newest
+          reverse_order(:updated_at).limit(1)
+        end
+
         def earliest
           order(:consumer_version_order).limit(1)
         end

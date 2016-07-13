@@ -71,7 +71,7 @@ module PactBroker
           .consumer(consumer_name)
           .provider(provider_name)
         query = query.tag(tag) unless tag.nil?
-        query.latest.all.collect(&:to_domain_with_content)[0]
+        query.newest.all.collect(&:to_domain_with_content)[0]
       end
 
       def find_pact consumer_name, consumer_version, provider_name
