@@ -56,7 +56,7 @@ module PactBroker
         end
 
         def newest
-          reverse_order("all_pacts.updated_at").limit(1)
+          reverse_order(:all_pacts__updated_at).limit(1)
         end
 
         def earliest
