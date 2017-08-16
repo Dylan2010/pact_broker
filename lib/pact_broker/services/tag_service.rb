@@ -22,7 +22,7 @@ module PactBroker
           comparearray = Array.new
           group = group_service.find_group_containing pacticipant
           if group.present?
-            group.each { |x| fillCompareArray x.consumer.name,x.provider.name,version.number,args.fetch(:tag_name),comparearray }
+            group.each { |x| fillCompareArray x.consumer.name,x.provider.name,version.number,args.fetch(:tag_name),comparearray,pacticipant.name }
             if comparearray.present?
               # construct post data
               postdata = {:tagArgs => args,:compareArray => comparearray}
@@ -55,18 +55,20 @@ module PactBroker
         tag_repository.find args
       end
 
-      def fillCompareArray consumer_name,provider_name,version,tag,compareArray
-        #find pact by version
-        param = {consumer_name:consumer_name,provider_name:provider_name,consumer_version_number:version}
-        pactByVersion = pact_service.find_pact param
-        #find latest pact in tag
-        param = {consumer_name:consumer_name,provider_name:provider_name,tag:tag}
-        pactByTag = pact_service.find_latest_pact param
-        if pactByVersion && pactByTag
-          #use old pact with same tag as reference
-          logger.info "compare pact with tag #{tag} with pact with #{version} between consumer #{consumer_name} and provider #{provider_name}"
-          compareArray.push pactByTag
-          compareArray.push pactByVersion
+      def fillCompareArray consumer_name,provider_name,version,tag,compareArray,targetConsumer_name
+        if consumer_name == targetConsumer_name
+          # find pact by version
+          param = {consumer_name:consumer_name,provider_name:provider_name,consumer_version_number:version}
+          pactByVersion = pact_service.find_pact param
+          # find latest pact in tag
+          param = {consumer_name:consumer_name,provider_name:provider_name,tag:tag}
+          pactByTag = pact_service.find_latest_pact param
+          if pactByVersion && pactByTag
+            #use old pact with same tag as reference
+            logger.info "compare pact with tag #{tag} with pact with #{version} between consumer #{consumer_name} and provider #{provider_name}"
+            compareArray.push pactByTag
+            compareArray.push pactByVersion
+          end
         end
       end
 
