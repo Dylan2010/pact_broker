@@ -35,13 +35,14 @@ module PactBroker
               request = Net::HTTP::Post.new(uri.request_uri, header)
               request.body = postdatajson
               # Send the request
-              response = http.request(request)
-              compareFailArray = JSON.parse(response.body)
-              if !compareFailArray.present?
-                logger.info "compare pacts passed"
-              else
-                logger.warn "compare pacts failed. args:#{args}"
-              end
+              http.request(request)
+              #response = http.request(request)
+              #compareFailArray = JSON.parse(response.body)
+              #if !compareFailArray.present?
+              #  logger.info "compare pacts passed"
+              #else
+              #  logger.warn "compare pacts failed. args:#{args}"
+              #end
             end
           end
         rescue => err
@@ -66,8 +67,10 @@ module PactBroker
           if pactByVersion && pactByTag
             #use old pact with same tag as reference
             logger.info "compare pact with tag #{tag} with pact with #{version} between consumer #{consumer_name} and provider #{provider_name}"
-            compareArray.push pactByTag
-            compareArray.push pactByVersion
+            pactByTagWithVersion = {:version=>pactByTag.version,:content=>pactByTag}
+            pactByVersionWithVerion = {:version=>pactByVersion.version,:content=>pactByVersion}
+            compareArray.push pactByTagWithVersion
+            compareArray.push pactByVersionWithVerion
           end
         end
       end

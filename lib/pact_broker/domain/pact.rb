@@ -34,6 +34,10 @@ module PactBroker
         "Version #{consumer_version_number} - #{updated_at.to_time.localtime.strftime("%d/%m/%Y")}"
       end
 
+      def version
+        consumer_version_number
+      end
+
       def content_hash
         JSON.parse(json_content, PACT_PARSING_OPTIONS)
       end
